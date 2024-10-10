@@ -351,11 +351,18 @@ export function fromOpenAiToolCall(
     );
   }
   const f = toolCall.function;
+
+  let args;
+  try {
+    args = f.arguments ? JSON.parse(f.arguments) : f.arguments;
+  } catch (e) {
+    args = f.arguments;
+  }
   return {
     toolRequest: {
       name: f.name!,
       ref: toolCall.id,
-      input: f.arguments ? JSON.parse(f.arguments) : f.arguments,
+      input: args,
     },
   };
 }
@@ -376,15 +383,16 @@ export function fromOpenAiChoice(
     finishReason: finishReasonMap[choice.finish_reason] || 'other',
     message: {
       role: 'model',
-      content: toolRequestParts && toolRequestParts.length > 0
-        ? // Note: Not sure why I have to cast here exactly.
-          // Otherwise it thinks toolRequest must be 'undefined' if provided
-          (toolRequestParts as ToolRequestPart[])
-        : [
-            jsonMode
-              ? { data: JSON.parse(choice.message.content!) }
-              : { text: choice.message.content! },
-          ],
+      content:
+        toolRequestParts && toolRequestParts.length > 0
+          ? // Note: Not sure why I have to cast here exactly.
+            // Otherwise it thinks toolRequest must be 'undefined' if provided
+            (toolRequestParts as ToolRequestPart[])
+          : [
+              jsonMode
+                ? { data: JSON.parse(choice.message.content!) }
+                : { text: choice.message.content! },
+            ],
     },
     custom: {},
   };
