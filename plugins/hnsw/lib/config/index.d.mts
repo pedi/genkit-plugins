@@ -22,11 +22,11 @@ declare const indexerFlowConfig: {
         dataPath: z.ZodString;
         indexOutputPath: z.ZodString;
     }, "strip", z.ZodTypeAny, {
-        indexOutputPath: string;
         dataPath: string;
+        indexOutputPath: string;
     }, {
-        indexOutputPath: string;
         dataPath: string;
+        indexOutputPath: string;
     }>;
     outputSchema: z.ZodString;
 };

@@ -337,11 +337,17 @@ function fromOpenAiToolCall(toolCall) {
     );
   }
   const f = toolCall.function;
+  let args;
+  try {
+    args = f.arguments ? JSON.parse(f.arguments) : f.arguments;
+  } catch (e) {
+    args = f.arguments;
+  }
   return {
     toolRequest: {
       name: f.name,
       ref: toolCall.id,
-      input: f.arguments ? JSON.parse(f.arguments) : f.arguments
+      input: args
     }
   };
 }
